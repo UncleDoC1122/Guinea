@@ -19,7 +19,9 @@ namespace Guinea
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SiteDownloader.getter();
+            List<string> rawInfo = SiteDownloader.getter();
+
+            ExcelPutter.put(rawInfo);
         }
     }
 }

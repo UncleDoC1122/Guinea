@@ -12,7 +12,7 @@ namespace Guinea
 {
     class SiteDownloader
     {
-        public static void getter()
+        public static List<string> getter()
         {
             IWebDriver Browser = new OpenQA.Selenium.Chrome.ChromeDriver();
             Browser.Manage().Window.Maximize();
@@ -22,42 +22,42 @@ namespace Guinea
 
             List<string> output = new List<string>();
 
-            try
+
+            int iter = 2;
+            string title = "Go to page ";
+            while (true)
             {
-                int iter = 2;
-                string title = "Go to page ";
-                while (true)
+                ReadOnlyCollection<IWebElement> list = Browser.FindElements(By.ClassName("views-field-title"));
+                ReadOnlyCollection<IWebElement> listDates = Browser.FindElements(By.ClassName("views-field-body-1"));
+
+                for (int i = 0; i < list.Count; i++)
                 {
-                    ReadOnlyCollection<IWebElement> list = Browser.FindElements(By.ClassName("views-field-title"));
-                    ReadOnlyCollection<IWebElement> listDates = Browser.FindElements(By.ClassName("views-field-body-1"));
-
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        string combine = "";
-                        string date = listDates[i].Text.ToString();
-                        combine += list[i].Text.ToString() + "|";
-                        Match match = RCCM.Match(date);
-                        string tmp = match.Value.ToString();
-                        combine += tmp + "|";
-                        match = Date.Match(date);
-                        tmp = match.Value.ToString();
-                        combine += tmp;
-                        output.Add(combine);
-                    }
-
-                    string tempTitle = title + iter.ToString();
-
-                    Browser.FindElement(By.XPath("//button[starts-with(@title, " + tempTitle + ")]")).Click();
-
+                    string combine = "";
+                    string date = listDates[i].Text.ToString();
+                    combine += list[i].Text.ToString() + "|";
+                    Match match = RCCM.Match(date);
+                    string tmp = match.Value.ToString();
+                    combine += tmp + "|";
+                    match = Date.Match(date);
+                    tmp = match.Value.ToString();
+                    combine += tmp;
+                    output.Add(combine);
                 }
 
-            }
-            catch
-            {
-                MessageBox.Show("something gone wrong!!!");
+                string tempTitle = title + iter.ToString();
+
+
+                System.Threading.Thread.Sleep(10000);
+                Browser.FindElement(By.ClassName("pager-next")).Click();
+
+
+
             }
 
 
+
+            Browser.Quit();
+            return output;
         }
     }
 }
