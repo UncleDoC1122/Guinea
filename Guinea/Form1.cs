@@ -26,7 +26,7 @@ namespace Guinea
 
             for (int i = 0; i < rawInfo.Count; i++)
             {
-                File.AppendAllText("D:\\Test.txt", rawInfo[i] + "/n");
+                File.AppendAllText("D:\\Test.txt", rawInfo[i] + "\n");
             }
 
             ExcelPutter.put(rawInfo);
