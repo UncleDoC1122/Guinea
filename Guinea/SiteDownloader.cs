@@ -7,6 +7,7 @@ using OpenQA.Selenium;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using OpenQA.Selenium.Interactions;
 
 namespace Guinea
 {
@@ -22,42 +23,50 @@ namespace Guinea
 
             List<string> output = new List<string>();
 
-
-            int iter = 2;
-            string title = "Go to page ";
-            while (true)
+            try
             {
-                ReadOnlyCollection<IWebElement> list = Browser.FindElements(By.ClassName("views-field-title"));
-                ReadOnlyCollection<IWebElement> listDates = Browser.FindElements(By.ClassName("views-field-body-1"));
-
-                for (int i = 0; i < list.Count; i++)
+                int iter = 2;
+                string title = "Go to page ";
+                while (true)
                 {
-                    string combine = "";
-                    string date = listDates[i].Text.ToString();
-                    combine += list[i].Text.ToString() + "|";
-                    Match match = RCCM.Match(date);
-                    string tmp = match.Value.ToString();
-                    combine += tmp + "|";
-                    match = Date.Match(date);
-                    tmp = match.Value.ToString();
-                    combine += tmp;
-                    output.Add(combine);
+                    ReadOnlyCollection<IWebElement> list = Browser.FindElements(By.ClassName("views-field-title"));
+                    ReadOnlyCollection<IWebElement> listDates = Browser.FindElements(By.ClassName("views-field-body-1"));
+
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        string combine = "";
+                        string date = listDates[i].Text.ToString();
+                        combine += list[i].Text.ToString() + "|";
+                        Match match = RCCM.Match(date);
+                        string tmp = match.Value.ToString();
+                        combine += tmp + "|";
+                        match = Date.Match(date);
+                        tmp = match.Value.ToString();
+                        combine += tmp;
+                        output.Add(combine);
+                    }
+
+                    string tempTitle = title + iter.ToString();
+
+
+                    //System.Threading.Thread.Sleep(10000);
+
+
+
+                    IWebElement element = Browser.FindElement(By.XPath("//A[@title='Go to next page'][text()='next ›']"));
+
+                    Actions actions = new Actions(Browser);
+
+                    actions.MoveToElement(element).Click().Perform();
                 }
-
-                string tempTitle = title + iter.ToString();
-
-
-                System.Threading.Thread.Sleep(10000);
-                Browser.FindElement(By.ClassName("pager-next")).Click();
-
-
+            }
+            catch
+            {
 
             }
-
-
-
             Browser.Quit();
             return output;
         }
     }
 }
+
