@@ -18,46 +18,52 @@ namespace Guinea
             IWebDriver Browser = new OpenQA.Selenium.Chrome.ChromeDriver();
             Browser.Manage().Window.Maximize();
             Browser.Navigate().GoToUrl("http://apip.gov.gn/?q=content/annonces-l%C3%A9gales");
-            Regex RCCM = new Regex("\\d{3}[.]\\d{3}[A-Z]|\\d{6}[A-Z]");
+            Regex RCCM = new Regex("\\d{3}[.]\\d{3}[A-Z]|\\d{6}[A-Z]|\\d{6}|\\d{3}[.]\\d{3}");
             Regex Date = new Regex("\\d{2}[/]\\d{2}[/]\\d{4}|\\d{1,2}\\s\\w{3,10}[,]\\s\\d{4}");
 
             List<string> output = new List<string>();
 
             try
             {
-                int iter = 2;
-                string title = "Go to page ";
+
+                bool flag = true;
                 while (true)
                 {
-                    ReadOnlyCollection<IWebElement> list = Browser.FindElements(By.ClassName("views-field-title"));
-                    ReadOnlyCollection<IWebElement> listDates = Browser.FindElements(By.ClassName("views-field-body-1"));
-
-                    for (int i = 0; i < list.Count; i++)
+                    if (flag)
                     {
-                        string combine = "";
-                        string date = listDates[i].Text.ToString();
-                        combine += list[i].Text.ToString() + "|";
-                        Match match = RCCM.Match(date);
-                        string tmp = match.Value.ToString();
-                        combine += tmp + "|";
-                        match = Date.Match(date);
-                        tmp = match.Value.ToString();
-                        combine += tmp;
-                        output.Add(combine);
+                        flag = !flag;
+
+                        ReadOnlyCollection<IWebElement> list = Browser.FindElements(By.ClassName("views-field-title"));
+                        ReadOnlyCollection<IWebElement> listDates = Browser.FindElements(By.ClassName("views-field-body-1"));
+
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            string combine = "";
+                            string date = listDates[i].Text.ToString();
+                            combine += list[i].Text.ToString() + "|";
+                            Match match = RCCM.Match(date);
+                            string tmp = match.Value.ToString();
+                            combine += tmp + "|";
+                            match = Date.Match(date);
+                            tmp = match.Value.ToString();
+                            combine += tmp;
+                            output.Add(combine);
+                        }
                     }
-
-                    string tempTitle = title + iter.ToString();
-
-
-                    //System.Threading.Thread.Sleep(10000);
-
-
+                    else
+                    {
+                        flag = !flag;
+                    }
+                    
+                   
 
                     IWebElement element = Browser.FindElement(By.XPath("//A[@title='Go to next page'][text()='next ›']"));
 
                     Actions actions = new Actions(Browser);
 
-                    actions.MoveToElement(element).Click().Perform();
+                    actions.MoveToElement(element);
+                    actions.Click().Perform();
+                    
                 }
             }
             catch

@@ -39,7 +39,7 @@ namespace Guinea
 
             }
 
-            app.DefaultSaveFormat = Excel.XlFileFormat.xlExcel9795;
+            
             book = app.ThisWorkbook;
             book.Save();
             app.Quit();
